@@ -1,0 +1,45 @@
+[
+  {
+    "id": "1",
+    "blogId": "1",
+    "author": {
+      "id": "2",
+      "username": "johndoe",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=john"
+    },
+    "content": "Great article! Really helped me understand React hooks better.",
+    "likes": 8,
+    "replies": [
+      {
+        "id": "2",
+        "blogId": "1",
+        "author": {
+          "id": "3",
+          "username": "janedoe",
+          "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=jane"
+        },
+        "content": "I agree! The examples were very clear.",
+        "likes": 3,
+        "replies": [],
+        "createdAt": "2024-03-02T11:30:00Z",
+        "updatedAt": "2024-03-02T11:30:00Z"
+      }
+    ],
+    "createdAt": "2024-03-02T10:15:00Z",
+    "updatedAt": "2024-03-02T10:15:00Z"
+  },
+  {
+    "id": "3",
+    "blogId": "1",
+    "author": {
+      "id": "4",
+      "username": "alice",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=alice"
+    },
+    "content": "Could you write more about useEffect cleanup?",
+    "likes": 5,
+    "replies": [],
+    "createdAt": "2024-03-03T09:45:00Z",
+    "updatedAt": "2024-03-03T09:45:00Z"
+  }
+]

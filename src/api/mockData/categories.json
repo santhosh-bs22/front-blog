@@ -1,0 +1,66 @@
+[
+  {
+    "id": "1",
+    "name": "React",
+    "slug": "react",
+    "description": "Everything about React framework",
+    "postCount": 45,
+    "isActive": true
+  },
+  {
+    "id": "2",
+    "name": "TypeScript",
+    "slug": "typescript",
+    "description": "TypeScript tutorials and tips",
+    "postCount": 32,
+    "isActive": true
+  },
+  {
+    "id": "3",
+    "name": "Next.js",
+    "slug": "nextjs",
+    "description": "Next.js framework and SSR",
+    "postCount": 28,
+    "isActive": true
+  },
+  {
+    "id": "4",
+    "name": "UI/UX Design",
+    "slug": "ui-ux",
+    "description": "Design principles and patterns",
+    "postCount": 56,
+    "isActive": true
+  },
+  {
+    "id": "5",
+    "name": "AI & Machine Learning",
+    "slug": "ai-ml",
+    "description": "Artificial Intelligence and ML topics",
+    "postCount": 38,
+    "isActive": true
+  },
+  {
+    "id": "6",
+    "name": "Career",
+    "slug": "career",
+    "description": "Career advice and development",
+    "postCount": 42,
+    "isActive": true
+  },
+  {
+    "id": "7",
+    "name": "Web Development",
+    "slug": "web-dev",
+    "description": "General web development topics",
+    "postCount": 67,
+    "isActive": true
+  },
+  {
+    "id": "8",
+    "name": "DevOps",
+    "slug": "devops",
+    "description": "Development operations and CI/CD",
+    "postCount": 23,
+    "isActive": true
+  }
+]

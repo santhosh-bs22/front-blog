@@ -1,0 +1,26 @@
+[
+  {
+    "id": "1",
+    "title": "Getting Started with React and TypeScript",
+    "slug": "getting-started-with-react-and-typescript",
+    "content": "# Introduction\nReact with TypeScript provides type safety...",
+    "excerpt": "Learn how to set up a React project with TypeScript and best practices for type safety.",
+    "coverImage": "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800",
+    "author": {
+      "id": "2",
+      "username": "johndoe",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=john"
+    },
+    "category": "react",
+    "tags": ["react", "typescript", "frontend"],
+    "status": "published",
+    "featured": true,
+    "likes": 42,
+    "comments": 12,
+    "views": 1245,
+    "readingTime": 5,
+    "createdAt": "2024-03-01T10:00:00Z",
+    "updatedAt": "2024-03-01T10:00:00Z",
+    "publishedAt": "2024-03-01T10:00:00Z"
+  }
+]
