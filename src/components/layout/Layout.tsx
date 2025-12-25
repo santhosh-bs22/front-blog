@@ -2,7 +2,7 @@ import React from 'react';
 import { Outlet } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
-import { Toaster } from '@/components/ui/toaster';
+// import { Toaster } from '@/components/ui/toaster';
 
 const Layout: React.FC = () => {
   return (
@@ -12,7 +12,7 @@ const Layout: React.FC = () => {
         <Outlet />
       </main>
       <Footer />
-      <Toaster />
+      {/* <Toaster /> */}
     </div>
   );
 };
