@@ -19,7 +19,7 @@ import {
   EyeOff,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { cn } from '@/lib/utils';
 
 interface RichTextEditorProps {
   content: string;
@@ -27,138 +27,13 @@ interface RichTextEditorProps {
   placeholder?: string;
 }
 
-const MenuBar: React.FC<{ editor: any }> = ({ editor }) => {
-  const [linkUrl, setLinkUrl] = useState('');
-
-  const addLink = () => {
-    if (linkUrl) {
-      editor.chain().focus().setLink({ href: linkUrl }).run();
-      setLinkUrl('');
-    }
-  };
-
-  const addImage = () => {
-    const url = window.prompt('Enter image URL');
-    if (url) {
-      editor.chain().focus().setImage({ src: url }).run();
-    }
-  };
-
-  if (!editor) {
-    return null;
-  }
-
-  return (
-    <div className="border-b p-2 flex flex-wrap gap-1">
-      <Button
-        type="button"
-        variant="ghost"
-        size="sm"
-        onClick={() => editor.chain().focus().toggleBold().run()}
-        className={editor.isActive('bold') ? 'bg-accent' : ''}
-      >
-        <Bold className="h-4 w-4" />
-      </Button>
-      <Button
-        type="button"
-        variant="ghost"
-        size="sm"
-        onClick={() => editor.chain().focus().toggleItalic().run()}
-        className={editor.isActive('italic') ? 'bg-accent' : ''}
-      >
-        <Italic className="h-4 w-4" />
-      </Button>
-      <Button
-        type="button"
-        variant="ghost"
-        size="sm"
-        onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-        className={editor.isActive('heading', { level: 1 }) ? 'bg-accent' : ''}
-      >
-        <Heading1 className="h-4 w-4" />
-      </Button>
-      <Button
-        type="button"
-        variant="ghost"
-        size="sm"
-        onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-        className={editor.isActive('heading', { level: 2 }) ? 'bg-accent' : ''}
-      >
-        <Heading2 className="h-4 w-4" />
-      </Button>
-      <Button
-        type="button"
-        variant="ghost"
-        size="sm"
-        onClick={() => editor.chain().focus().toggleBulletList().run()}
-        className={editor.isActive('bulletList') ? 'bg-accent' : ''}
-      >
-        <List className="h-4 w-4" />
-      </Button>
-      <Button
-        type="button"
-        variant="ghost"
-        size="sm"
-        onClick={() => editor.chain().focus().toggleOrderedList().run()}
-        className={editor.isActive('orderedList') ? 'bg-accent' : ''}
-      >
-        <ListOrdered className="h-4 w-4" />
-      </Button>
-      <Button
-        type="button"
-        variant="ghost"
-        size="sm"
-        onClick={() => editor.chain().focus().toggleBlockquote().run()}
-        className={editor.isActive('blockquote') ? 'bg-accent' : ''}
-      >
-        <Quote className="h-4 w-4" />
-      </Button>
-      <Button
-        type="button"
-        variant="ghost"
-        size="sm"
-        onClick={() => editor.chain().focus().toggleCode().run()}
-        className={editor.isActive('code') ? 'bg-accent' : ''}
-      >
-        <Code className="h-4 w-4" />
-      </Button>
-      <div className="relative">
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={addLink}
-        >
-          <LinkIcon className="h-4 w-4" />
-        </Button>
-        <div className="absolute top-full left-0 mt-1 p-2 bg-background border rounded shadow-lg z-10 hidden group-hover:block">
-          <input
-            type="text"
-            placeholder="Enter URL"
-            value={linkUrl}
-            onChange={(e) => setLinkUrl(e.target.value)}
-            className="px-2 py-1 border rounded text-sm w-48"
-          />
-        </div>
-      </div>
-      <Button
-        type="button"
-        variant="ghost"
-        size="sm"
-        onClick={addImage}
-      >
-        <ImageIcon className="h-4 w-4" />
-      </Button>
-    </div>
-  );
-};
-
 const RichTextEditor: React.FC<RichTextEditorProps> = ({
   content,
   onChange,
   placeholder = 'Start writing your blog post...',
 }) => {
   const [previewMode, setPreviewMode] = useState(false);
+  const [linkUrl, setLinkUrl] = useState('');
 
   const editor = useEditor({
     extensions: [
@@ -177,6 +52,20 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     },
   });
 
+  const addLink = () => {
+    if (linkUrl) {
+      editor?.chain().focus().setLink({ href: linkUrl }).run();
+      setLinkUrl('');
+    }
+  };
+
+  const addImage = () => {
+    const url = window.prompt('Enter image URL');
+    if (url) {
+      editor?.chain().focus().setImage({ src: url }).run();
+    }
+  };
+
   if (!editor) {
     return null;
   }
@@ -186,35 +75,136 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
   return (
     <div className="border rounded-lg overflow-hidden">
-      <Tabs defaultValue="write" className="w-full">
-        <div className="flex justify-between items-center border-b">
-          <TabsList className="h-12">
-            <TabsTrigger value="write" className="flex items-center gap-2">
-              Write
-            </TabsTrigger>
-            <TabsTrigger value="preview" className="flex items-center gap-2">
-              {previewMode ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              Preview
-            </TabsTrigger>
-          </TabsList>
-          <div className="px-4 text-sm text-muted-foreground">
-            {wordCount} words • {charCount} characters
+      {/* Toolbar */}
+      <div className="border-b bg-muted/50">
+        <div className="flex items-center justify-between p-2">
+          <div className="flex items-center gap-1">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => editor.chain().focus().toggleBold().run()}
+              className={cn(editor.isActive('bold') && 'bg-accent')}
+            >
+              <Bold className="h-4 w-4" />
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => editor.chain().focus().toggleItalic().run()}
+              className={cn(editor.isActive('italic') && 'bg-accent')}
+            >
+              <Italic className="h-4 w-4" />
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+              className={cn(editor.isActive('heading', { level: 1 }) && 'bg-accent')}
+            >
+              <Heading1 className="h-4 w-4" />
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+              className={cn(editor.isActive('heading', { level: 2 }) && 'bg-accent')}
+            >
+              <Heading2 className="h-4 w-4" />
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => editor.chain().focus().toggleBulletList().run()}
+              className={cn(editor.isActive('bulletList') && 'bg-accent')}
+            >
+              <List className="h-4 w-4" />
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => editor.chain().focus().toggleOrderedList().run()}
+              className={cn(editor.isActive('orderedList') && 'bg-accent')}
+            >
+              <ListOrdered className="h-4 w-4" />
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => editor.chain().focus().toggleBlockquote().run()}
+              className={cn(editor.isActive('blockquote') && 'bg-accent')}
+            >
+              <Quote className="h-4 w-4" />
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => editor.chain().focus().toggleCode().run()}
+              className={cn(editor.isActive('code') && 'bg-accent')}
+            >
+              <Code className="h-4 w-4" />
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={addLink}
+            >
+              <LinkIcon className="h-4 w-4" />
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={addImage}
+            >
+              <ImageIcon className="h-4 w-4" />
+            </Button>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setPreviewMode(!previewMode)}
+            >
+              {previewMode ? (
+                <>
+                  <EyeOff className="h-4 w-4 mr-1" />
+                  Edit
+                </>
+              ) : (
+                <>
+                  <Eye className="h-4 w-4 mr-1" />
+                  Preview
+                </>
+              )}
+            </Button>
+            <div className="text-xs text-muted-foreground">
+              {wordCount} words • {charCount} chars
+            </div>
           </div>
         </div>
+      </div>
 
-        <TabsContent value="write" className="m-0">
-          <MenuBar editor={editor} />
-          <div className="p-4 min-h-[400px] max-h-[600px] overflow-y-auto">
-            <EditorContent editor={editor} />
-          </div>
-        </TabsContent>
-
-        <TabsContent value="preview" className="m-0">
-          <div className="p-4 min-h-[400px] max-h-[600px] overflow-y-auto prose prose-sm max-w-none">
-            <div dangerouslySetInnerHTML={{ __html: content }} />
-          </div>
-        </TabsContent>
-      </Tabs>
+      {/* Editor Content */}
+      {previewMode ? (
+        <div className="p-4 min-h-[400px] max-h-[600px] overflow-y-auto prose prose-sm max-w-none">
+          <div dangerouslySetInnerHTML={{ __html: content }} />
+        </div>
+      ) : (
+        <div className="p-4 min-h-[400px] max-h-[600px] overflow-y-auto">
+          <EditorContent editor={editor} />
+        </div>
+      )}
     </div>
   );
 };

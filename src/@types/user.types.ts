@@ -1,22 +1,5 @@
-export interface User {
-  id: string;
-  username: string;
-  email: string;
-  password?: string;
-  role: UserRole;
-  avatar?: string;
-  bio?: string;
-  website?: string;
-  socialLinks: {
-    twitter?: string;
-    github?: string;
-    linkedin?: string;
-  };
-  isActive: boolean;
-  isVerified: boolean;
-  joinedAt: Date;
-  lastLogin?: Date;
-}
+// Import UserRole from blog.types or define it here
+import { UserRole } from './blog.types';
 
 export interface AuthUser extends User {
   token?: string;
@@ -41,3 +24,6 @@ export interface AuthResponse {
   token?: string;
   error?: string;
 }
+
+// Re-export User from blog.types
+export { User, UserRole } from './blog.types';

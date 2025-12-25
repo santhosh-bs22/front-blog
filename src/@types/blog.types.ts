@@ -1,5 +1,27 @@
-export type BlogStatus = 'draft' | 'published' | 'pending' | 'rejected';
+// Define UserRole before using it
 export type UserRole = 'visitor' | 'user' | 'admin';
+
+// Define User interface before Blog
+export interface User {
+  id: string;
+  username: string;
+  email: string;
+  role: UserRole;
+  avatar?: string;
+  bio?: string;
+  website?: string;
+  socialLinks?: {
+    twitter?: string;
+    github?: string;
+    linkedin?: string;
+  };
+  isActive: boolean;
+  isVerified: boolean;
+  joinedAt: Date;
+  lastLogin?: Date;
+}
+
+export type BlogStatus = 'draft' | 'published' | 'pending' | 'rejected';
 
 export interface Blog {
   id: string;

@@ -69,9 +69,9 @@ const BlogCard: React.FC<BlogCardProps> = ({ blog, variant = 'default' }) => {
             className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
           />
           {blog.featured && (
-            <Badge className="absolute top-3 left-3 bg-primary">
-              Featured
-            </Badge>
+            <div className="absolute top-3 left-3">
+              <Badge className="bg-primary">Featured</Badge>
+            </div>
           )}
         </div>
         <CardHeader>
@@ -92,7 +92,7 @@ const BlogCard: React.FC<BlogCardProps> = ({ blog, variant = 'default' }) => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <img
-                src={blog.author.avatar}
+                src={blog.author.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${blog.author.username}`}
                 alt={blog.author.username}
                 className="w-8 h-8 rounded-full"
               />
@@ -110,16 +110,16 @@ const BlogCard: React.FC<BlogCardProps> = ({ blog, variant = 'default' }) => {
       <CardFooter className="border-t pt-4">
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="sm" className="flex items-center">
-              <Heart className="h-4 w-4 mr-2" />
+            <Button variant="ghost" size="sm" className="flex items-center gap-1">
+              <Heart className="h-4 w-4" />
               {blog.likes}
             </Button>
-            <Button variant="ghost" size="sm" className="flex items-center">
-              <MessageCircle className="h-4 w-4 mr-2" />
+            <Button variant="ghost" size="sm" className="flex items-center gap-1">
+              <MessageCircle className="h-4 w-4" />
               {blog.comments}
             </Button>
-            <Button variant="ghost" size="sm" className="flex items-center">
-              <Eye className="h-4 w-4 mr-2" />
+            <Button variant="ghost" size="sm" className="flex items-center gap-1">
+              <Eye className="h-4 w-4" />
               {blog.views}
             </Button>
           </div>

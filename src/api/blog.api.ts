@@ -1,15 +1,16 @@
-import { Blog, PaginatedResponse, QueryParams } from '@/@types';
+import { Blog, PaginatedResponse, QueryParams, BlogStatus } from '@/@types';
 import blogsData from './mockData/blogs.json';
 
 const blogs: Blog[] = blogsData.map(blog => ({
   ...blog,
   createdAt: new Date(blog.createdAt),
   updatedAt: new Date(blog.updatedAt),
-  publishedAt: blog.publishedAt ? new Date(blog.publishedAt) : undefined
+  publishedAt: blog.publishedAt ? new Date(blog.publishedAt) : undefined,
+  status: blog.status as BlogStatus,
+  readingTime: blog.readingTime || 5
 }));
 
 export const blogApi = {
-  // Get all blogs with pagination and filters
   getBlogs: async (params: QueryParams = {}): Promise<PaginatedResponse<Blog>> => {
     const {
       page = 1,
@@ -25,7 +26,6 @@ export const blogApi = {
       setTimeout(() => {
         let filteredBlogs = [...blogs];
         
-        // Apply filters
         if (search) {
           filteredBlogs = filteredBlogs.filter(blog =>
             blog.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -42,7 +42,6 @@ export const blogApi = {
           filteredBlogs = filteredBlogs.filter(blog => blog.status === status);
         }
         
-        // Apply sorting
         filteredBlogs.sort((a, b) => {
           const aValue = a[sortBy as keyof Blog];
           const bValue = b[sortBy as keyof Blog];
@@ -62,7 +61,6 @@ export const blogApi = {
           return 0;
         });
         
-        // Apply pagination
         const startIndex = (page - 1) * limit;
         const endIndex = startIndex + limit;
         const paginatedBlogs = filteredBlogs.slice(startIndex, endIndex);
@@ -78,13 +76,11 @@ export const blogApi = {
     });
   },
 
-  // Get single blog by ID
   getBlogById: async (id: string): Promise<Blog | null> => {
     return new Promise((resolve) => {
       setTimeout(() => {
         const blog = blogs.find(b => b.id === id);
         if (blog) {
-          // Increment views
           blog.views += 1;
         }
         resolve(blog || null);
@@ -92,7 +88,6 @@ export const blogApi = {
     });
   },
 
-  // Get blog by slug
   getBlogBySlug: async (slug: string): Promise<Blog | null> => {
     return new Promise((resolve) => {
       setTimeout(() => {
@@ -105,7 +100,6 @@ export const blogApi = {
     });
   },
 
-  // Create new blog
   createBlog: async (blogData: Omit<Blog, 'id' | 'createdAt' | 'updatedAt'>): Promise<Blog> => {
     return new Promise((resolve) => {
       setTimeout(() => {
@@ -116,7 +110,8 @@ export const blogApi = {
           updatedAt: new Date(),
           likes: 0,
           comments: 0,
-          views: 0
+          views: 0,
+          readingTime: Math.ceil(blogData.content.length / 1000)
         };
         
         blogs.unshift(newBlog);
@@ -125,7 +120,6 @@ export const blogApi = {
     });
   },
 
-  // Update blog
   updateBlog: async (id: string, updates: Partial<Blog>): Promise<Blog | null> => {
     return new Promise((resolve) => {
       setTimeout(() => {
@@ -143,7 +137,6 @@ export const blogApi = {
     });
   },
 
-  // Delete blog
   deleteBlog: async (id: string): Promise<boolean> => {
     return new Promise((resolve) => {
       setTimeout(() => {
@@ -157,7 +150,6 @@ export const blogApi = {
     });
   },
 
-  // Like a blog
   likeBlog: async (id: string): Promise<Blog | null> => {
     return new Promise((resolve) => {
       setTimeout(() => {
@@ -171,7 +163,6 @@ export const blogApi = {
     });
   },
 
-  // Get featured blogs
   getFeaturedBlogs: async (): Promise<Blog[]> => {
     return new Promise((resolve) => {
       setTimeout(() => {
@@ -183,7 +174,6 @@ export const blogApi = {
     });
   },
 
-  // Get blogs by category
   getBlogsByCategory: async (category: string): Promise<Blog[]> => {
     return new Promise((resolve) => {
       setTimeout(() => {

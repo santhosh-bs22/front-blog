@@ -1,16 +1,20 @@
-import { DashboardStats, Blog, User } from '@/@types';
+import { DashboardStats, Blog, User, BlogStatus } from '@/@types';
 import blogsData from './mockData/blogs.json';
 import usersData from './mockData/users.json';
 
-const blogs = blogsData.map(blog => ({
+const blogs: Blog[] = blogsData.map(blog => ({
   ...blog,
   createdAt: new Date(blog.createdAt),
-  updatedAt: new Date(blog.updatedAt)
+  updatedAt: new Date(blog.updatedAt),
+  publishedAt: blog.publishedAt ? new Date(blog.publishedAt) : undefined,
+  status: blog.status as BlogStatus
 }));
 
-const users = usersData.map(user => ({
+const users: User[] = usersData.map(user => ({
   ...user,
-  joinedAt: new Date(user.joinedAt)
+  joinedAt: new Date(user.joinedAt),
+  role: user.role as 'admin' | 'user' | 'visitor',
+  socialLinks: user.socialLinks || {}
 }));
 
 export const adminApi = {
@@ -22,7 +26,6 @@ export const adminApi = {
         const activeAuthors = new Set(blogs.map(b => b.author.id)).size;
         const pendingPosts = blogs.filter(b => b.status === 'pending').length;
         
-        // Generate mock monthly data
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
         const postsPerMonth = months.map((month, i) => ({
           month,
@@ -103,7 +106,7 @@ export const adminApi = {
       setTimeout(() => {
         const blogIndex = blogs.findIndex(b => b.id === blogId);
         if (blogIndex !== -1) {
-          blogs[blogIndex].status = status as any;
+          blogs[blogIndex].status = status as BlogStatus;
           resolve(blogs[blogIndex]);
         }
         resolve(null);

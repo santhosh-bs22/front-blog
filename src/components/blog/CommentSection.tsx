@@ -37,7 +37,6 @@ const CommentSection: React.FC<CommentSectionProps> = ({
   onDeleteComment,
 }) => {
   const { user } = useAuth();
-  const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyContent, setReplyContent] = useState('');
 
   const {
@@ -118,35 +117,29 @@ const CommentSection: React.FC<CommentSectionProps> = ({
             <p className="mt-2 text-sm whitespace-pre-wrap">{comment.content}</p>
             
             <div className="flex items-center space-x-4 mt-3">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 px-2"
+              <button
                 onClick={() => onLikeComment(comment.id)}
+                className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
               >
-                <Heart className="h-4 w-4 mr-1" />
+                <Heart className="h-4 w-4" />
                 {comment.likes}
-              </Button>
+              </button>
               
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 px-2"
+              <button
                 onClick={() => setIsReplying(!isReplying)}
+                className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
               >
-                <MessageCircle className="h-4 w-4 mr-1" />
+                <MessageCircle className="h-4 w-4" />
                 Reply
-              </Button>
+              </button>
               
               {comment.replies.length > 0 && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-8 px-2"
+                <button
                   onClick={() => setShowReplies(!showReplies)}
+                  className="text-sm text-muted-foreground hover:text-foreground"
                 >
                   {showReplies ? 'Hide' : 'Show'} {comment.replies.length} replies
-                </Button>
+                </button>
               )}
             </div>
             

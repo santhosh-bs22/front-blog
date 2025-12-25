@@ -84,12 +84,12 @@ const ChartComponent: React.FC<ChartComponentProps> = ({
               cx="50%"
               cy="50%"
               labelLine={false}
-              label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+              label={({ name, percent }: { name: string; percent: number }) => `${name}: ${(percent * 100).toFixed(0)}%`}
               outerRadius={80}
               fill="#8884d8"
               dataKey={dataKey}
             >
-              {data.map((entry, index) => (
+              {data.map((entry: any, index: number) => (
                 <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
               ))}
             </Pie>
@@ -103,13 +103,17 @@ const ChartComponent: React.FC<ChartComponentProps> = ({
     }
   };
 
+  const chart = renderChart();
+  
   return (
     <div className="bg-card border rounded-lg p-4">
       <h3 className="text-lg font-semibold mb-4">{title}</h3>
       <div style={{ height }}>
-        <ResponsiveContainer width="100%" height="100%">
-          {renderChart()}
-        </ResponsiveContainer>
+        {chart && (
+          <ResponsiveContainer width="100%" height="100%">
+            {chart}
+          </ResponsiveContainer>
+        )}
       </div>
     </div>
   );

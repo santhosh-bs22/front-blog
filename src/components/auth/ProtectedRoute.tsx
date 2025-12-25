@@ -28,13 +28,16 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   }
 
   // Check role permissions
-  const roleHierarchy: Record<UserRole, number> = {
+  const roleHierarchy: Record<string, number> = {
     visitor: 0,
     user: 1,
     admin: 2,
   };
 
-  if (roleHierarchy[user.role] < roleHierarchy[requiredRole]) {
+  const userRole = user.role as string;
+  const requiredRoleStr = requiredRole as string;
+  
+  if (roleHierarchy[userRole] < roleHierarchy[requiredRoleStr]) {
     return <Navigate to="/" replace />;
   }
 
