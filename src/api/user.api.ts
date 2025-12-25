@@ -1,16 +1,22 @@
-import { User } from '@/@types';
+// src/api/user.api.ts
+import { User, UserRole } from '@/@types';
 import usersData from './mockData/users.json';
 
-const users: User[] = usersData.map(user => ({
+interface UserWithPassword extends User {
+  password?: string;
+}
+
+const users: UserWithPassword[] = usersData.map(user => ({
   ...user,
-  joinedAt: new Date(user.joinedAt)
+  joinedAt: new Date(user.joinedAt),
+  role: user.role as UserRole
 }));
 
 export const userApi = {
   getAllUsers: async (): Promise<User[]> => {
     return new Promise((resolve) => {
       setTimeout(() => {
-        const usersWithoutPasswords = users.map(({ password, ...user }) => user);
+        const usersWithoutPasswords = users.map(({ password, ...user }) => user as User);
         resolve(usersWithoutPasswords);
       }, 300);
     });
@@ -22,7 +28,7 @@ export const userApi = {
         const user = users.find(u => u.id === id);
         if (user) {
           const { password, ...userWithoutPassword } = user;
-          resolve(userWithoutPassword);
+          resolve(userWithoutPassword as User);
         }
         resolve(null);
       }, 200);
@@ -36,17 +42,16 @@ export const userApi = {
         if (userIndex !== -1) {
           users[userIndex] = { ...users[userIndex], ...updates };
           const { password, ...userWithoutPassword } = users[userIndex];
-          resolve(userWithoutPassword);
+          resolve(userWithoutPassword as User);
         }
         resolve(null);
       }, 300);
     });
   },
 
-  getCurrentUserStats: async (userId: string) => {
+  getCurrentUserStats: async (_userId: string) => { // Added underscore to show intentionally unused
     return new Promise((resolve) => {
       setTimeout(() => {
-        // Mock stats
         resolve({
           totalPosts: 12,
           totalLikes: 245,
@@ -59,10 +64,9 @@ export const userApi = {
     });
   },
 
-  getAuthorPosts: async (authorId: string) => {
+  getAuthorPosts: async (_authorId: string) => { // Added underscore
     return new Promise((resolve) => {
       setTimeout(() => {
-        // Mock posts
         resolve([
           {
             id: '1',

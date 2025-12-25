@@ -1,5 +1,5 @@
-// Import UserRole from blog.types or define it here
-import { UserRole } from './blog.types';
+// src/@types/user.types.ts
+import type { User, UserRole } from './blog.types';
 
 export interface AuthUser extends User {
   token?: string;
@@ -25,5 +25,5 @@ export interface AuthResponse {
   error?: string;
 }
 
-// Re-export User from blog.types
-export { User, UserRole } from './blog.types';
+// Fixed: Use 'export type' for isolatedModules
+export type { User, UserRole };

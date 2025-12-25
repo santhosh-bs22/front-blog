@@ -1,21 +1,40 @@
-import { DashboardStats, Blog, User, BlogStatus } from '@/@types';
+import { DashboardStats, Blog, User, BlogStatus, UserRole } from '@/@types';
 import blogsData from './mockData/blogs.json';
 import usersData from './mockData/users.json';
 
-const blogs: Blog[] = blogsData.map(blog => ({
-  ...blog,
-  createdAt: new Date(blog.createdAt),
-  updatedAt: new Date(blog.updatedAt),
-  publishedAt: blog.publishedAt ? new Date(blog.publishedAt) : undefined,
-  status: blog.status as BlogStatus
-}));
+// Internal type to handle mock logic with passwords
+interface UserWithPassword extends User {
+  password?: string;
+}
 
-const users: User[] = usersData.map(user => ({
+const users: UserWithPassword[] = usersData.map(user => ({
   ...user,
   joinedAt: new Date(user.joinedAt),
-  role: user.role as 'admin' | 'user' | 'visitor',
+  role: user.role as UserRole,
   socialLinks: user.socialLinks || {}
 }));
+
+const blogs: Blog[] = blogsData.map(blog => {
+  // Find the full user object to satisfy the User interface requirements
+  const fullAuthor = users.find(u => u.id === blog.author.id);
+  
+  return {
+    ...blog,
+    createdAt: new Date(blog.createdAt),
+    updatedAt: new Date(blog.updatedAt),
+    publishedAt: blog.publishedAt ? new Date(blog.publishedAt) : undefined,
+    status: blog.status as BlogStatus,
+    author: (fullAuthor || {
+      ...blog.author,
+      email: '',
+      role: 'user' as UserRole,
+      isActive: true,
+      isVerified: false,
+      joinedAt: new Date(),
+      socialLinks: {}
+    }) as User
+  };
+});
 
 export const adminApi = {
   getDashboardStats: async (): Promise<DashboardStats> => {
@@ -27,12 +46,13 @@ export const adminApi = {
         const pendingPosts = blogs.filter(b => b.status === 'pending').length;
         
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
-        const postsPerMonth = months.map((month, i) => ({
+        // Removed unused 'i' parameters
+        const postsPerMonth = months.map((month) => ({
           month,
           count: Math.floor(Math.random() * 50) + 20
         }));
         
-        const userRegistrations = months.map((month, i) => ({
+        const userRegistrations = months.map((month) => ({
           month,
           count: Math.floor(Math.random() * 30) + 10
         }));
@@ -41,7 +61,7 @@ export const adminApi = {
           .sort((a, b) => b.views - a.views)
           .slice(0, 5);
         
-        const monthlyGrowth = ((postsPerMonth[5].count - postsPerMonth[0].count) / postsPerMonth[0].count) * 100;
+        const monthlyGrowth = 12.5; 
         
         resolve({
           totalUsers,
@@ -60,7 +80,8 @@ export const adminApi = {
   getAllUsers: async (): Promise<User[]> => {
     return new Promise((resolve) => {
       setTimeout(() => {
-        const usersWithoutPasswords = users.map(({ password, ...user }) => user);
+        // Exclude passwords when returning the User type
+        const usersWithoutPasswords = users.map(({ password, ...user }) => user as User);
         resolve(usersWithoutPasswords);
       }, 300);
     });
@@ -73,7 +94,7 @@ export const adminApi = {
         if (userIndex !== -1) {
           users[userIndex] = { ...users[userIndex], ...updates };
           const { password, ...userWithoutPassword } = users[userIndex];
-          resolve(userWithoutPassword);
+          resolve(userWithoutPassword as User);
         }
         resolve(null);
       }, 300);
