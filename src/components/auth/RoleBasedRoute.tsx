@@ -16,11 +16,10 @@ const RoleBasedRoute: React.FC<RoleBasedRouteProps> = ({
 }) => {
   const { user, isLoading } = useAuth();
 
-  if (isLoading) {
-    return null; // Or loading spinner
-  }
+  if (isLoading) return null;
 
-  if (!user || !allowedRoles.includes(user.role)) {
+  // Fixed: Added a check for user.role and provided a type assertion to ensure it's not undefined
+  if (!user || !user.role || !allowedRoles.includes(user.role as UserRole)) {
     return <Navigate to={fallbackPath} replace />;
   }
 

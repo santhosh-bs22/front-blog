@@ -5,7 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useBlog } from '@/contexts/BlogContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import {
   AlertDialog,
   AlertDialogAction,

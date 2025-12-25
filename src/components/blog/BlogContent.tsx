@@ -11,10 +11,7 @@ interface BlogContentProps {
 }
 
 const BlogContent: React.FC<BlogContentProps> = ({ 
-  blog,
-  onLike,
-  onBookmark,
-  onShare
+  blog
 }) => {
   return (
     <article className="prose prose-lg max-w-none">

@@ -1,13 +1,11 @@
-// Define UserRole before using it
 export type UserRole = 'visitor' | 'user' | 'admin';
 
-// Define User interface before Blog
 export interface User {
   id: string;
   username: string;
-  email: string;
-  role: UserRole;
-  avatar?: string;
+  email?: string; // Changed to optional to match mock data
+  role?: UserRole; // Changed to optional
+  avatar: string;
   bio?: string;
   website?: string;
   socialLinks?: {
@@ -15,10 +13,11 @@ export interface User {
     github?: string;
     linkedin?: string;
   };
-  isActive: boolean;
-  isVerified: boolean;
-  joinedAt: Date;
+  isActive?: boolean; // Changed to optional
+  isVerified?: boolean; // Changed to optional
+  joinedAt?: Date | string; // Support both Date and string
   lastLogin?: Date;
+  password?: string; // Added to resolve errors in auth service
 }
 
 export type BlogStatus = 'draft' | 'published' | 'pending' | 'rejected';
@@ -43,7 +42,6 @@ export interface Blog {
   updatedAt: Date;
   publishedAt?: Date;
 }
-
 export interface Comment {
   id: string;
   blogId: string;

@@ -31,7 +31,6 @@ interface CommentSectionProps {
 
 const CommentSection: React.FC<CommentSectionProps> = ({
   comments,
-  blogId,
   onAddComment,
   onLikeComment,
   onDeleteComment,

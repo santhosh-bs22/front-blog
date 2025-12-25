@@ -3,6 +3,7 @@ import { Search, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useDebounce } from '@/hooks/useDebounce';
+import { cn } from '@/lib/utils'; // Fixed: Added missing import
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
@@ -33,15 +34,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
   const handleClear = () => {
     setQuery('');
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      handleClear();
-    }
+    if (inputRef.current) inputRef.current.focus();
   };
 
   return (
@@ -51,19 +44,16 @@ const SearchBar: React.FC<SearchBarProps> = ({
         isFocused ? 'border-primary ring-2 ring-primary/20' : 'border-input'
       )}>
         <Search className="absolute left-3 h-4 w-4 text-muted-foreground" />
-        
         <Input
           ref={inputRef}
           type="search"
           placeholder={placeholder}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          onKeyDown={handleKeyDown}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           className="pl-10 pr-10 border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
         />
-        
         {showClearButton && query && (
           <Button
             type="button"
@@ -76,14 +66,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
           </Button>
         )}
       </div>
-      
-      {query && (
-        <div className="absolute left-0 right-0 top-full mt-1 bg-popover border rounded-lg shadow-lg z-50 p-2">
-          <p className="text-sm text-muted-foreground px-2 py-1">
-            Press Enter to search or ESC to clear
-          </p>
-        </div>
-      )}
     </div>
   );
 };

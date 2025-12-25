@@ -5,48 +5,26 @@ export class AuthService {
   private static instance: AuthService;
 
   static getInstance(): AuthService {
-    if (!AuthService.instance) {
-      AuthService.instance = new AuthService();
-    }
+    if (!AuthService.instance) AuthService.instance = new AuthService();
     return AuthService.instance;
   }
 
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
-    // Simulate API call delay
     return new Promise((resolve) => {
       setTimeout(() => {
-        const users: User[] = usersData.map(user => ({
+        const users = (usersData as any[]).map(user => ({
           ...user,
           joinedAt: new Date(user.joinedAt)
-        }));
+        })) as (User & { password?: string })[];
 
-        const user = users.find(u => 
-          u.email === credentials.email && 
-          u.password === credentials.password
-        );
+        const user = users.find(u => u.email === credentials.email && u.password === credentials.password);
 
         if (user) {
-          // Create mock token
-          const token = btoa(JSON.stringify({
-            userId: user.id,
-            email: user.email,
-            role: user.role,
-            exp: Date.now() + 24 * 60 * 60 * 1000 // 24 hours
-          }));
-
-          // Remove password before sending response
+          const token = btoa(JSON.stringify({ userId: user.id, email: user.email, role: user.role, exp: Date.now() + 86400000 }));
           const { password, ...userWithoutPassword } = user;
-
-          resolve({
-            success: true,
-            user: userWithoutPassword,
-            token
-          });
+          resolve({ success: true, user: userWithoutPassword as User, token });
         } else {
-          resolve({
-            success: false,
-            error: 'Invalid email or password'
-          });
+          resolve({ success: false, error: 'Invalid email or password' });
         }
       }, 500);
     });
@@ -55,123 +33,50 @@ export class AuthService {
   async register(data: RegisterData): Promise<AuthResponse> {
     return new Promise((resolve) => {
       setTimeout(() => {
-        const users: User[] = this.getFromStorage('users', usersData);
-
-        // Check if user already exists
-        const existingUser = users.find(u => u.email === data.email);
-
-        if (existingUser) {
-          resolve({
-            success: false,
-            error: 'User with this email already exists'
-          });
+        const users = this.getFromStorage('users', usersData) as (User & { password?: string })[];
+        if (users.find(u => u.email === data.email)) {
+          resolve({ success: false, error: 'User exists' });
           return;
         }
 
-        // Create new user
-        const newUser: User = {
+        const newUser: User & { password?: string } = {
           id: Date.now().toString(),
           username: data.username,
           email: data.email,
           password: data.password,
           role: 'user',
           avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${data.username}`,
-          bio: '',
-          socialLinks: {},
           isActive: true,
           isVerified: false,
-          joinedAt: new Date()
+          joinedAt: new Date(),
         };
 
         users.push(newUser);
         this.saveToStorage('users', users);
-
-        // Create mock token
-        const token = btoa(JSON.stringify({
-          userId: newUser.id,
-          email: newUser.email,
-          role: newUser.role,
-          exp: Date.now() + 24 * 60 * 60 * 1000
-        }));
-
         const { password, ...userWithoutPassword } = newUser;
-
-        resolve({
-          success: true,
-          user: userWithoutPassword,
-          token
-        });
+        resolve({ success: true, user: userWithoutPassword as User, token: 'mock-token' });
       }, 500);
     });
   }
 
-  async logout(): Promise<{ success: boolean }> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        // Clear auth data
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        resolve({ success: true });
-      }, 200);
-    });
-  }
-
   async getCurrentUser(): Promise<User | null> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const token = localStorage.getItem('token');
-        const storedUser = localStorage.getItem('user');
-
-        if (token && storedUser) {
-          try {
-            const tokenData = JSON.parse(atob(token));
-            if (tokenData.exp > Date.now()) {
-              resolve(JSON.parse(storedUser));
-            } else {
-              // Token expired
-              localStorage.removeItem('token');
-              localStorage.removeItem('user');
-              resolve(null);
-            }
-          } catch (error) {
-            resolve(null);
-          }
-        } else {
-          resolve(null);
-        }
-      }, 200);
-    });
+    const user = localStorage.getItem('user');
+    return user ? JSON.parse(user) : null;
   }
 
-  async validateToken(token: string): Promise<boolean> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        try {
-          const tokenData = JSON.parse(atob(token));
-          resolve(tokenData.exp > Date.now());
-        } catch (error) {
-          resolve(false);
-        }
-      }, 100);
-    });
+  async logout(): Promise<{ success: boolean }> {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    return { success: true };
   }
 
   private getFromStorage<T>(key: string, defaultValue: T): T {
-    try {
-      const item = localStorage.getItem(key);
-      return item ? JSON.parse(item) : defaultValue;
-    } catch (error) {
-      console.error('Error reading from localStorage:', error);
-      return defaultValue;
-    }
+    const item = localStorage.getItem(key);
+    return item ? JSON.parse(item) : defaultValue;
   }
 
   private saveToStorage(key: string, value: any): void {
-    try {
-      localStorage.setItem(key, JSON.stringify(value));
-    } catch (error) {
-      console.error('Error saving to localStorage:', error);
-    }
+    localStorage.setItem(key, JSON.stringify(value));
   }
 }
 

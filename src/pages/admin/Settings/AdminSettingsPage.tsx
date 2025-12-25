@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Save, Upload, Globe, Mail, Users, FileText, Lock } from 'lucide-react';
+import { Save, Upload, Globe, Users, FileText, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -64,7 +64,7 @@ const AdminSettingsPage: React.FC = () => {
     },
   });
 
-  const onSubmit = async (data: SiteSettingsData) => {
+  const onSubmit = async (_: SiteSettingsData) => {
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));

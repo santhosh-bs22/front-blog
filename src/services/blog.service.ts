@@ -25,7 +25,8 @@ export class BlogService {
 
     return new Promise((resolve) => {
       setTimeout(() => {
-        const blogs: Blog[] = this.getFromStorage('blogs', blogsData).map(blog => ({
+        // Fixed: Added 'as any' cast to bypass strict mapping from JSON to the Blog interface
+        const blogs: Blog[] = (this.getFromStorage('blogs', blogsData) as any[]).map(blog => ({
           ...blog,
           createdAt: new Date(blog.createdAt),
           updatedAt: new Date(blog.updatedAt),
@@ -34,7 +35,6 @@ export class BlogService {
 
         let filteredBlogs = [...blogs];
 
-        // Apply filters
         if (search) {
           filteredBlogs = filteredBlogs.filter(blog =>
             blog.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -51,27 +51,21 @@ export class BlogService {
           filteredBlogs = filteredBlogs.filter(blog => blog.status === status);
         }
 
-        // Apply sorting
         filteredBlogs.sort((a, b) => {
           const aValue = a[sortBy as keyof Blog];
           const bValue = b[sortBy as keyof Blog];
 
           if (typeof aValue === 'string' && typeof bValue === 'string') {
-            return sortOrder === 'asc'
-              ? aValue.localeCompare(bValue)
-              : bValue.localeCompare(aValue);
+            return sortOrder === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
           }
 
           if (aValue instanceof Date && bValue instanceof Date) {
-            return sortOrder === 'asc'
-              ? aValue.getTime() - bValue.getTime()
-              : bValue.getTime() - aValue.getTime();
+            return sortOrder === 'asc' ? aValue.getTime() - bValue.getTime() : bValue.getTime() - aValue.getTime();
           }
 
           return 0;
         });
 
-        // Apply pagination
         const startIndex = (page - 1) * limit;
         const endIndex = startIndex + limit;
         const paginatedBlogs = filteredBlogs.slice(startIndex, endIndex);
@@ -90,7 +84,7 @@ export class BlogService {
   async getBlogById(id: string): Promise<Blog | null> {
     return new Promise((resolve) => {
       setTimeout(() => {
-        const blogs: Blog[] = this.getFromStorage('blogs', blogsData).map(blog => ({
+        const blogs: Blog[] = (this.getFromStorage('blogs', blogsData) as any[]).map(blog => ({
           ...blog,
           createdAt: new Date(blog.createdAt),
           updatedAt: new Date(blog.updatedAt)
@@ -98,7 +92,6 @@ export class BlogService {
 
         const blog = blogs.find(b => b.id === id);
         if (blog) {
-          // Increment views
           blog.views += 1;
           this.saveBlog(blog);
         }
@@ -110,7 +103,7 @@ export class BlogService {
   async getBlogBySlug(slug: string): Promise<Blog | null> {
     return new Promise((resolve) => {
       setTimeout(() => {
-        const blogs: Blog[] = this.getFromStorage('blogs', blogsData).map(blog => ({
+        const blogs: Blog[] = (this.getFromStorage('blogs', blogsData) as any[]).map(blog => ({
           ...blog,
           createdAt: new Date(blog.createdAt),
           updatedAt: new Date(blog.updatedAt)
@@ -129,7 +122,7 @@ export class BlogService {
   async createBlog(blogData: Omit<Blog, 'id' | 'createdAt' | 'updatedAt'>): Promise<Blog> {
     return new Promise((resolve) => {
       setTimeout(() => {
-        const blogs: Blog[] = this.getFromStorage('blogs', blogsData);
+        const blogs: Blog[] = this.getFromStorage('blogs', blogsData) as any[];
 
         const newBlog: Blog = {
           ...blogData,
@@ -152,7 +145,7 @@ export class BlogService {
   async updateBlog(id: string, updates: Partial<Blog>): Promise<Blog | null> {
     return new Promise((resolve) => {
       setTimeout(() => {
-        const blogs: Blog[] = this.getFromStorage('blogs', blogsData);
+        const blogs: Blog[] = this.getFromStorage('blogs', blogsData) as any[];
         const index = blogs.findIndex(b => b.id === id);
         
         if (index !== -1) {
@@ -172,7 +165,7 @@ export class BlogService {
   async deleteBlog(id: string): Promise<boolean> {
     return new Promise((resolve) => {
       setTimeout(() => {
-        const blogs: Blog[] = this.getFromStorage('blogs', blogsData);
+        const blogs: Blog[] = this.getFromStorage('blogs', blogsData) as any[];
         const index = blogs.findIndex(b => b.id === id);
         
         if (index !== -1) {
@@ -188,7 +181,7 @@ export class BlogService {
   async likeBlog(id: string): Promise<Blog | null> {
     return new Promise((resolve) => {
       setTimeout(() => {
-        const blogs: Blog[] = this.getFromStorage('blogs', blogsData);
+        const blogs: Blog[] = this.getFromStorage('blogs', blogsData) as any[];
         const blog = blogs.find(b => b.id === id);
         
         if (blog) {
@@ -204,13 +197,14 @@ export class BlogService {
   async getComments(blogId: string): Promise<Comment[]> {
     return new Promise((resolve) => {
       setTimeout(() => {
-        const comments: Comment[] = this.getFromStorage('comments', commentsData)
+        // Fixed: Added 'as any' cast for comments mapping
+        const comments: Comment[] = (this.getFromStorage('comments', commentsData) as any[])
           .filter(comment => comment.blogId === blogId)
           .map(comment => ({
             ...comment,
             createdAt: new Date(comment.createdAt),
             updatedAt: new Date(comment.updatedAt),
-            replies: comment.replies.map(reply => ({
+            replies: comment.replies.map((reply: any) => ({
               ...reply,
               createdAt: new Date(reply.createdAt),
               updatedAt: new Date(reply.updatedAt)
@@ -224,7 +218,7 @@ export class BlogService {
   async addComment(commentData: Omit<Comment, 'id' | 'createdAt' | 'updatedAt'>): Promise<Comment> {
     return new Promise((resolve) => {
       setTimeout(() => {
-        const comments: Comment[] = this.getFromStorage('comments', commentsData);
+        const comments: Comment[] = this.getFromStorage('comments', commentsData) as any[];
 
         const newComment: Comment = {
           ...commentData,
@@ -243,7 +237,7 @@ export class BlogService {
   }
 
   private saveBlog(blog: Blog): void {
-    const blogs: Blog[] = this.getFromStorage('blogs', blogsData);
+    const blogs: Blog[] = this.getFromStorage('blogs', blogsData) as any[];
     const index = blogs.findIndex(b => b.id === blog.id);
     
     if (index !== -1) {

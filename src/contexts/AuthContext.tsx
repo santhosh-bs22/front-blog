@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { User, AuthUser } from '@/@types';
-import { authApi } from '@/api/auth.api';
+import { User } from '@/@types';
+import { authService } from '@/services/auth.service';
 
 interface AuthContextType {
   user: User | null;
@@ -11,7 +11,8 @@ interface AuthContextType {
   updateUser: (updates: Partial<User>) => void;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+// Fixed: Exported the context so it can be accessed by useAuth.ts
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -35,24 +36,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const checkAuth = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const storedUser = localStorage.getItem('user');
-      
-      if (token && storedUser) {
-        // Validate token (mock validation)
-        const tokenData = JSON.parse(atob(token));
-        if (tokenData.exp > Date.now()) {
-          setUser(JSON.parse(storedUser));
-        } else {
-          // Token expired
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
-        }
-      }
+      const currentUser = await authService.getCurrentUser();
+      setUser(currentUser);
     } catch (error) {
       console.error('Auth check failed:', error);
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
     } finally {
       setIsLoading(false);
     }
@@ -60,7 +47,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
-      const response = await authApi.login({ email, password });
+      const response = await authService.login({ email, password });
       
       if (response.success && response.user && response.token) {
         localStorage.setItem('token', response.token);
@@ -77,7 +64,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const register = async (username: string, email: string, password: string): Promise<boolean> => {
     try {
-      const response = await authApi.register({
+      const response = await authService.register({
         username,
         email,
         password,
@@ -97,14 +84,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+  const logout = async () => {
+    await authService.logout();
     setUser(null);
-    // Clear any other auth-related storage
-    localStorage.removeItem('drafts');
-    localStorage.removeItem('liked_blogs');
-    localStorage.removeItem('bookmarked_blogs');
   };
 
   const updateUser = (updates: Partial<User>) => {

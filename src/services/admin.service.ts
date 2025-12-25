@@ -11,7 +11,6 @@ export class AdminService {
   }
 
   async getDashboardStats(): Promise<DashboardStats> {
-    // Simulate API call
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve({
@@ -21,20 +20,14 @@ export class AdminService {
           pendingPosts: 12,
           monthlyGrowth: 15.5,
           postsPerMonth: [
-            { month: 'Jan', count: 45 },
-            { month: 'Feb', count: 52 },
-            { month: 'Mar', count: 68 },
-            { month: 'Apr', count: 74 },
-            { month: 'May', count: 82 },
-            { month: 'Jun', count: 95 },
+            { month: 'Jan', count: 45 }, { month: 'Feb', count: 52 },
+            { month: 'Mar', count: 68 }, { month: 'Apr', count: 74 },
+            { month: 'May', count: 82 }, { month: 'Jun', count: 95 },
           ],
           userRegistrations: [
-            { month: 'Jan', count: 23 },
-            { month: 'Feb', count: 28 },
-            { month: 'Mar', count: 35 },
-            { month: 'Apr', count: 42 },
-            { month: 'May', count: 48 },
-            { month: 'Jun', count: 56 },
+            { month: 'Jan', count: 23 }, { month: 'Feb', count: 28 },
+            { month: 'Mar', count: 35 }, { month: 'Apr', count: 42 },
+            { month: 'May', count: 48 }, { month: 'Jun', count: 56 },
           ],
           topBlogs: [] as Blog[],
         });
@@ -43,29 +36,28 @@ export class AdminService {
   }
 
   async updateBlogStatus(blogId: string, status: string): Promise<Blog | null> {
-    // Get from localStorage or mock data
-    const blogs = this.getFromStorage('blogs', []);
-    const blogIndex = blogs.findIndex((b: Blog) => b.id === blogId);
+    // Fixed: Added explicit type casting (as Blog[])
+    const blogs = this.getFromStorage('blogs', []) as Blog[];
+    const blogIndex = blogs.findIndex((b) => b.id === blogId);
     
     if (blogIndex !== -1) {
-      blogs[blogIndex].status = status;
+      blogs[blogIndex].status = status as any;
       this.saveToStorage('blogs', blogs);
       return blogs[blogIndex];
     }
-    
     return null;
   }
 
   async updateUserRole(userId: string, role: string): Promise<User | null> {
-    const users = this.getFromStorage('users', []);
-    const userIndex = users.findIndex((u: User) => u.id === userId);
+    // Fixed: Added explicit type casting (as User[])
+    const users = this.getFromStorage('users', []) as User[];
+    const userIndex = users.findIndex((u) => u.id === userId);
     
     if (userIndex !== -1) {
-      users[userIndex].role = role;
+      users[userIndex].role = role as any;
       this.saveToStorage('users', users);
       return users[userIndex];
     }
-    
     return null;
   }
 

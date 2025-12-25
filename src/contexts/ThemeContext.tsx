@@ -9,7 +9,8 @@ interface ThemeContextType {
   toggleTheme: () => void;
 }
 
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+// Fixed: Export ThemeContext so it can be imported in hooks/useTheme.ts
+export const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const useTheme = () => {
   const context = useContext(ThemeContext);
@@ -33,8 +34,6 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
 
   useEffect(() => {
     const root = window.document.documentElement;
-    
-    // Remove previous theme classes
     root.classList.remove('light', 'dark');
     
     if (theme === 'system') {
@@ -45,13 +44,11 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
       root.classList.add(theme);
       setResolvedTheme(theme);
     }
-    
     localStorage.setItem('theme', theme);
   }, [theme]);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    
     const handleChange = () => {
       if (theme === 'system') {
         const root = window.document.documentElement;
@@ -61,14 +58,11 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
         setResolvedTheme(systemTheme);
       }
     };
-    
     mediaQuery.addEventListener('change', handleChange);
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, [theme]);
 
-  const setTheme = (newTheme: Theme) => {
-    setThemeState(newTheme);
-  };
+  const setTheme = (newTheme: Theme) => setThemeState(newTheme);
 
   const toggleTheme = () => {
     setThemeState(current => {
@@ -79,14 +73,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   };
 
   return (
-    <ThemeContext.Provider
-      value={{
-        theme,
-        resolvedTheme,
-        setTheme,
-        toggleTheme
-      }}
-    >
+    <ThemeContext.Provider value={{ theme, resolvedTheme, setTheme, toggleTheme }}>
       {children}
     </ThemeContext.Provider>
   );

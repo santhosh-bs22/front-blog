@@ -20,7 +20,7 @@ export const useAuthStore = create<AuthState>()(
       token: null,
       isLoading: false,
 
-      login: async (email: string, password: string): Promise<boolean> => {
+      login: async (email: string, _: string): Promise<boolean> => {
         set({ isLoading: true });
         
         try {
@@ -55,7 +55,7 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
-      register: async (username: string, email: string, password: string): Promise<boolean> => {
+      register: async (username: string, email: string, _: string): Promise<boolean> => {
         set({ isLoading: true });
         
         try {
